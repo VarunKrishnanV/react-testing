@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import Camera, { FACING_MODES, IMAGE_TYPES } from 'react-html5-camera-photo';
 import 'react-html5-camera-photo/build/css/index.css';
+import './cameratake.css'
 
 function CameraTake(props) {
     const [facingMode, setFacingMode] = useState(FACING_MODES.ENVIRONMENT);
@@ -49,28 +50,24 @@ function CameraTake(props) {
     function toggleFullscreen() {
         if (!isFullscreen) {
             // Enter fullscreen mode
-            if (document.documentElement.requestFullscreen) {
-                document.documentElement.requestFullscreen();
-            } else if (document.documentElement.mozRequestFullScreen) { /* Firefox */
-                document.documentElement.mozRequestFullScreen();
-            } else if (document.documentElement.webkitRequestFullscreen) { /* Chrome, Safari and Opera */
-                document.documentElement.webkitRequestFullscreen();
-            } else if (document.documentElement.msRequestFullscreen) { /* IE/Edge */
-                document.documentElement.msRequestFullscreen();
+            const element = document.documentElement;
+            const requestMethod = element.requestFullscreen || element.mozRequestFullScreen || element.webkitRequestFullscreen || element.msRequestFullscreen;
+            if (requestMethod) {
+                requestMethod.call(element);
+                setIsFullscreen(true);
+            } else {
+                alert('Fullscreen is not supported in this browser.');
             }
         } else {
             // Exit fullscreen mode
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.mozCancelFullScreen) { /* Firefox */
-                document.mozCancelFullScreen();
-            } else if (document.webkitExitFullscreen) { /* Chrome, Safari and Opera */
-                document.webkitExitFullscreen();
-            } else if (document.msExitFullscreen) { /* IE/Edge */
-                document.msExitFullscreen();
+            const exitMethod = document.exitFullscreen || document.mozCancelFullScreen || document.webkitExitFullscreen || document.msExitFullscreen;
+            if (exitMethod) {
+                exitMethod.call(document);
+                setIsFullscreen(false);
+            } else {
+                alert('Fullscreen exit is not supported in this browser.');
             }
         }
-        setIsFullscreen((prevFullscreen) => !prevFullscreen);
     }
 
     function retakePhoto() {
@@ -78,37 +75,42 @@ function CameraTake(props) {
     }
 
     return (
-        <div>
-            <div style={{ display: capturedImage ? 'block' : 'none' }}>
-                <img src={capturedImage} alt="Captured" />
-                <button onClick={retakePhoto}>Retake</button>
+        <div className="camera-container">
+            <div className="camera-preview">
+                {capturedImage ? (
+                    <div className="captured-image">
+                        <img src={capturedImage} alt="Captured" />
+                        <button onClick={retakePhoto}>Retake</button>
+                    </div>
+                ) : (
+                    <Camera
+                        ref={cameraRef}
+                        onTakePhoto={handleTakePhoto}
+                        onTakePhotoAnimationDone={handleTakePhotoAnimationDone}
+                        onCameraError={handleCameraError}
+                        idealFacingMode={facingMode}
+                        idealResolution={{ width: 640, height: 480 }}
+                        imageType={IMAGE_TYPES.JPG}
+                        imageCompression={0.97}
+                        isMaxResolution={true}
+                        isImageMirror={false}
+                        isSilentMode={false}
+                        isDisplayStartCameraError={true}
+                        isFullscreen={isFullscreen}
+                        sizeFactor={1}
+                        onCameraStart={handleCameraStart}
+                        onCameraStop={handleCameraStop}
+                    />
+                )}
             </div>
-            {!capturedImage && (
-                <Camera
-                    ref={cameraRef}
-                    onTakePhoto={handleTakePhoto}
-                    onTakePhotoAnimationDone={handleTakePhotoAnimationDone}
-                    onCameraError={handleCameraError}
-                    idealFacingMode={facingMode}
-                    idealResolution={{ width: 640, height: 480 }}
-                    imageType={IMAGE_TYPES.JPG}
-                    imageCompression={0.97}
-                    isMaxResolution={true}
-                    isImageMirror={false}
-                    isSilentMode={false}
-                    isDisplayStartCameraError={true}
-                    isFullscreen={isFullscreen}
-                    sizeFactor={1}
-                    onCameraStart={handleCameraStart}
-                    onCameraStop={handleCameraStop}
-                />
-            )}
-            <button onClick={toggleFacingMode}>
-                Switch Camera
-            </button>
-            <button onClick={toggleFullscreen}>
-                {isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
-            </button>
+            <div className="controls">
+                <button className="control-button" onClick={toggleFacingMode}>
+                    Switch Camera
+                </button>
+                <button className="control-button" onClick={toggleFullscreen}>
+                    {isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+                </button>
+            </div>
         </div>
     );
 }
