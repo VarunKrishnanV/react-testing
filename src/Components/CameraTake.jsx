@@ -4,6 +4,7 @@ import 'react-html5-camera-photo/build/css/index.css';
 
 function CameraTake(props) {
     const [facingMode, setFacingMode] = useState(FACING_MODES.ENVIRONMENT);
+    const [isFullscreen, setIsFullscreen] = useState(false);
 
     function handleTakePhoto(dataUri) {
         console.log('Photo taken:', dataUri);
@@ -26,10 +27,13 @@ function CameraTake(props) {
     }
 
     function toggleFacingMode() {
-        setFacingMode((prevMode) => {
-            const newMode = prevMode === FACING_MODES.ENVIRONMENT ? FACING_MODES.USER : FACING_MODES.ENVIRONMENT;
-            return newMode;
-        });
+        setFacingMode((prevMode) =>
+            prevMode === FACING_MODES.ENVIRONMENT ? FACING_MODES.USER : FACING_MODES.ENVIRONMENT
+        );
+    }
+
+    function toggleFullscreen() {
+        setIsFullscreen((prevFullscreen) => !prevFullscreen);
     }
 
     return (
@@ -46,13 +50,16 @@ function CameraTake(props) {
                 isImageMirror={false}
                 isSilentMode={false}
                 isDisplayStartCameraError={true}
-                isFullscreen={false}
+                isFullscreen={isFullscreen}
                 sizeFactor={1}
                 onCameraStart={handleCameraStart}
                 onCameraStop={handleCameraStop}
             />
             <button onClick={toggleFacingMode}>
                 Switch Camera
+            </button>
+            <button onClick={toggleFullscreen}>
+                {isFullscreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
             </button>
         </div>
     );
