@@ -14,6 +14,7 @@ function CameraTake(props) {
         setCapturedImage(dataUri); // Store the captured image
     }
 
+    
     function handleTakePhotoAnimationDone(dataUri) {
         console.log('Photo taken (animation done):', dataUri);
     }
