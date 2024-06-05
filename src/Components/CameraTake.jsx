@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Camera, { FACING_MODES, IMAGE_TYPES } from 'react-html5-camera-photo';
 import 'react-html5-camera-photo/build/css/index.css';
 
 function CameraTake(props) {
     const [facingMode, setFacingMode] = useState(FACING_MODES.ENVIRONMENT);
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const cameraRef = useRef(null);
 
     function handleTakePhoto(dataUri) {
         console.log('Photo taken:', dataUri);
@@ -16,6 +17,14 @@ function CameraTake(props) {
 
     function handleCameraError(error) {
         console.error('Camera error:', error);
+        // Handle specific errors that might occur on Android devices
+        if (error.name === 'NotAllowedError') {
+            alert('Camera access was denied. Please allow camera access.');
+        } else if (error.name === 'NotReadableError') {
+            alert('Could not access the camera. It might be in use by another application.');
+        } else {
+            alert(`Camera error: ${error.message}`);
+        }
     }
 
     function handleCameraStart(stream) {
@@ -27,6 +36,10 @@ function CameraTake(props) {
     }
 
     function toggleFacingMode() {
+        if (cameraRef.current) {
+            cameraRef.current.stopCamera();
+        }
+
         setFacingMode((prevMode) =>
             prevMode === FACING_MODES.ENVIRONMENT ? FACING_MODES.USER : FACING_MODES.ENVIRONMENT
         );
@@ -39,6 +52,7 @@ function CameraTake(props) {
     return (
         <div>
             <Camera
+                ref={cameraRef}
                 onTakePhoto={handleTakePhoto}
                 onTakePhotoAnimationDone={handleTakePhotoAnimationDone}
                 onCameraError={handleCameraError}
