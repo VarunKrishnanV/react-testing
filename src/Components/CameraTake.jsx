@@ -6,12 +6,10 @@ function CameraTake(props) {
     const [facingMode, setFacingMode] = useState(FACING_MODES.ENVIRONMENT);
 
     function handleTakePhoto(dataUri) {
-        // Process the photo data URI
         console.log('Photo taken:', dataUri);
     }
 
     function handleTakePhotoAnimationDone(dataUri) {
-        // Process the photo data URI after the animation
         console.log('Photo taken (animation done):', dataUri);
     }
 
@@ -28,17 +26,18 @@ function CameraTake(props) {
     }
 
     function toggleFacingMode() {
-        setFacingMode((prevMode) =>
-            prevMode === FACING_MODES.ENVIRONMENT ? FACING_MODES.USER : FACING_MODES.ENVIRONMENT
-        );
+        setFacingMode((prevMode) => {
+            const newMode = prevMode === FACING_MODES.ENVIRONMENT ? FACING_MODES.USER : FACING_MODES.ENVIRONMENT;
+            return newMode;
+        });
     }
 
     return (
         <div>
             <Camera
-                onTakePhoto={(dataUri) => { handleTakePhoto(dataUri); }}
-                onTakePhotoAnimationDone={(dataUri) => { handleTakePhotoAnimationDone(dataUri); }}
-                onCameraError={(error) => { handleCameraError(error); }}
+                onTakePhoto={handleTakePhoto}
+                onTakePhotoAnimationDone={handleTakePhotoAnimationDone}
+                onCameraError={handleCameraError}
                 idealFacingMode={facingMode}
                 idealResolution={{ width: 640, height: 480 }}
                 imageType={IMAGE_TYPES.JPG}
@@ -49,8 +48,8 @@ function CameraTake(props) {
                 isDisplayStartCameraError={true}
                 isFullscreen={false}
                 sizeFactor={1}
-                onCameraStart={(stream) => { handleCameraStart(stream); }}
-                onCameraStop={() => { handleCameraStop(); }}
+                onCameraStart={handleCameraStart}
+                onCameraStop={handleCameraStop}
             />
             <button onClick={toggleFacingMode}>
                 Switch Camera
