@@ -1,24 +1,11 @@
-import logo from './logo.svg';
 import './App.css';
+import DocumentScanner from './Components/DocumentScanner';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <DocumentScanner src={"https://media.istockphoto.com/id/949409412/photo/newspaper-and-coffee-on-wooden-background.jpg?s=612x612&w=0&k=20&c=I7awJAIxvfUDrbHBZ_pO5_LYc10lelzsMGyvZLF1kxQ="}/>
+    </>
   );
 }
 
